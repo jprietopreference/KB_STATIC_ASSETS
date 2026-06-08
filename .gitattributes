@@ -1,0 +1,6 @@
+# USD/MDL are byte-exact assets — never EOL-normalize
+*.usd binary
+*.usdc binary
+*.usdz binary
+*.usda binary
+*.mdl binary
