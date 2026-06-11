@@ -301,6 +301,70 @@ def Xform "World" (
                 token info:implementationSource = "sourceAsset"
                 asset info:mdl:sourceAsset = @OmniPBR.mdl@
                 token info:mdl:sourceAsset:subIdentifier = "OmniPBR"
+                float inputs:albedo_add
+                float inputs:albedo_brightness
+                float inputs:albedo_desaturation
+                asset inputs:ao_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:ao_to_diffuse
+                float inputs:bump_factor
+                float inputs:detail_bump_factor
+                asset inputs:detail_normalmap_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:detail_texture_rotate
+                float2 inputs:detail_texture_scale
+                float2 inputs:detail_texture_translate
+                color3f inputs:diffuse_color_constant
+                asset inputs:diffuse_texture (
+                    colorSpace = "sRGB"
+                )
+                color3f inputs:diffuse_tint
+                color3f inputs:emissive_color
+                asset inputs:emissive_color_texture (
+                    colorSpace = "sRGB"
+                )
+                float inputs:emissive_intensity
+                asset inputs:emissive_mask_texture (
+                    colorSpace = "raw"
+                )
+                bool inputs:enable_emission
+                bool inputs:enable_opacity
+                bool inputs:enable_opacity_texture
+                bool inputs:enable_ORM_texture
+                bool inputs:flip_tangent_u
+                bool inputs:flip_tangent_v
+                float inputs:geometry_normal_roughness_strength
+                float inputs:metallic_constant
+                asset inputs:metallic_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:metallic_texture_influence
+                asset inputs:normalmap_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:opacity_constant
+                int inputs:opacity_mode
+                asset inputs:opacity_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:opacity_threshold
+                asset inputs:ORM_texture (
+                    colorSpace = "raw"
+                )
+                bool inputs:project_uvw
+                float inputs:reflection_roughness_constant
+                float inputs:reflection_roughness_texture_influence
+                asset inputs:reflectionroughness_texture (
+                    colorSpace = "raw"
+                )
+                float inputs:specular_level
+                float inputs:texture_rotate
+                float2 inputs:texture_scale
+                float2 inputs:texture_translate
+                int inputs:uv_space_index
+                bool inputs:world_or_object
                 token outputs:out
             }
         }
