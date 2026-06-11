@@ -1,0 +1,648 @@
+/***************************************************************************************************
+ * KB_PBR_Processor shared canonical MaterialX SDK preview module.
+ *
+ * Source: MaterialX SDK 1.39.4 texture-based preview output after material-name prefix removal.
+ * Keep this path stable so Omniverse Kit's URI-keyed MDL module cache can reuse one module across bundles.
+ **************************************************************************************************/
+
+// generated from MaterialX using the SDK version 1.39.4
+
+mdl 1.10;
+
+import ::df::*;
+import ::base::*;
+import ::math::*;
+import ::state::*;
+import ::anno::*;
+import ::tex::*;
+using ::materialx::core import *;
+using ::materialx::sampling import *;
+using ::materialx::stdlib_1_10 import *;
+using ::materialx::pbrlib_1_10 import *;
+
+struct NG_separate3_color3__result
+{
+    float mxp_outr;
+    float mxp_outg;
+    float mxp_outb;
+};
+
+NG_separate3_color3__result NG_separate3_color3
+(
+    color in1 = color(0.000000, 0.000000, 0.000000)
+)
+{
+    float N_extract_0_out = materialx::stdlib_1_10::mx_extract_color3(in1, 0);
+    float N_extract_1_out = materialx::stdlib_1_10::mx_extract_color3(in1, 1);
+    float N_extract_2_out = materialx::stdlib_1_10::mx_extract_color3(in1, 2);
+    NG_separate3_color3__result result__;
+    result__.mxp_outr = N_extract_0_out;
+    result__.mxp_outg = N_extract_1_out;
+    result__.mxp_outb = N_extract_2_out;
+    return result__;
+}
+
+color NG_srgb_texture_to_lin_rec709_color3
+(
+    color in1 = color(0.000000, 0.000000, 0.000000)
+)
+{
+    color bias_out = in1 + 0.055000;
+    color linSeg_out = in1 / 12.920000;
+    NG_separate3_color3__result colorSeparate_result = NG_separate3_color3(in1);
+    color max_out = math::max(bias_out, 0.000000);
+    float isAboveR_out = materialx::stdlib_1_10::mx_ifgreater_float(colorSeparate_result.mxp_outr, 0.040450, 1.000000, 0.000000);
+    float isAboveG_out = materialx::stdlib_1_10::mx_ifgreater_float(colorSeparate_result.mxp_outg, 0.040450, 1.000000, 0.000000);
+    float isAboveB_out = materialx::stdlib_1_10::mx_ifgreater_float(colorSeparate_result.mxp_outb, 0.040450, 1.000000, 0.000000);
+    color scale_out = max_out / 1.055000;
+    color isAbove_out = color( isAboveR_out,isAboveG_out,isAboveB_out );
+    color powSeg_out = math::pow(scale_out, 2.400000);
+    color mix_out = math::lerp(linSeg_out, powSeg_out, isAbove_out);
+    return mix_out;
+}
+
+float2 NG_open_pbr_anisotropy
+(
+    float roughness = 0.000000,
+    float anisotropy = 0.000000
+)
+{
+    float rough_sq_out = roughness * roughness;
+    float aniso_invert_out = 1.000000 - anisotropy;
+    float aniso_invert_sq_out = aniso_invert_out * aniso_invert_out;
+    float denom_out = aniso_invert_sq_out + 1.000000;
+    float fraction_out = 2.000000 / denom_out;
+    float sqrt_out = math::sqrt(fraction_out);
+    float alpha_x_out = rough_sq_out * sqrt_out;
+    float alpha_y_out = aniso_invert_out * alpha_x_out;
+    float2 result_out = float2( alpha_x_out,alpha_y_out );
+    return result_out;
+}
+
+float3 NG_convert_color3_vector3
+(
+    color in1 = color(0.000000, 0.000000, 0.000000)
+)
+{
+    NG_separate3_color3__result separate_result = NG_separate3_color3(in1);
+    float3 combine_out = float3( separate_result.mxp_outr,separate_result.mxp_outg,separate_result.mxp_outb );
+    return combine_out;
+}
+
+float3 NG_convert_float_vector3
+(
+    float in1 = 0.000000
+)
+{
+    float3 combine_out = float3( in1,in1,in1 );
+    return combine_out;
+}
+
+color NG_convert_float_color3
+(
+    float in1 = 0.000000
+)
+{
+    color combine_out = color( in1,in1,in1 );
+    return combine_out;
+}
+
+material NG_open_pbr_surface_surfaceshader_limited_layers
+(
+    float base_weight = 1.000000,
+    color base_color = color(0.800000, 0.800000, 0.800000),
+    float base_diffuse_roughness = 0.000000,
+    float base_metalness = 0.000000,
+    float specular_weight = 1.000000,
+    color specular_color = color(1.000000, 1.000000, 1.000000),
+    float specular_roughness = 0.300000,
+    float specular_ior = 1.500000,
+    float specular_roughness_anisotropy = 0.000000,
+    float transmission_weight = 0.000000,
+    color transmission_color = color(1.000000, 1.000000, 1.000000),
+    float transmission_depth = 0.000000,
+    color transmission_scatter = color(0.000000, 0.000000, 0.000000),
+    float transmission_scatter_anisotropy = 0.000000,
+    float transmission_dispersion_scale = 0.000000,
+    float transmission_dispersion_abbe_number = 20.000000,
+    float subsurface_weight = 0.000000,
+    color subsurface_color = color(0.800000, 0.800000, 0.800000),
+    float subsurface_radius = 1.000000,
+    color subsurface_radius_scale = color(1.000000, 0.500000, 0.250000),
+    float subsurface_scatter_anisotropy = 0.000000,
+    float fuzz_weight = 0.000000,
+    color fuzz_color = color(1.000000, 1.000000, 1.000000),
+    float fuzz_roughness = 0.500000,
+    float coat_weight = 0.000000,
+    color coat_color = color(1.000000, 1.000000, 1.000000),
+    float coat_roughness = 0.000000,
+    float coat_roughness_anisotropy = 0.000000,
+    float coat_ior = 1.600000,
+    float coat_darkening = 1.000000,
+    float thin_film_weight = 0.000000,
+    float thin_film_thickness = 0.500000,
+    float thin_film_ior = 1.400000,
+    float emission_luminance = 0.000000,
+    color emission_color = color(1.000000, 1.000000, 1.000000),
+    float geometry_opacity = 1.000000,
+    bool geometry_thin_walled = false,
+    float3 geometry_normal = state::transform_normal(state::coordinate_internal, state::coordinate_world, state::normal()),
+    float3 geometry_coat_normal = state::transform_normal(state::coordinate_internal, state::coordinate_world, state::normal()),
+    float3 geometry_tangent = state::transform_vector(state::coordinate_internal, state::coordinate_world, state::texture_tangent_u(0)),
+    float3 geometry_coat_tangent = state::transform_vector(state::coordinate_internal, state::coordinate_world, state::texture_tangent_u(0))
+)
+ = let
+{
+    float2 coat_roughness_vector_out = NG_open_pbr_anisotropy(coat_roughness, coat_roughness_anisotropy);
+    color metal_reflectivity_out = base_color * base_weight;
+    color metal_edgecolor_out = specular_color * specular_weight;
+    float coat_roughness_to_power_4_out = math::pow(coat_roughness, 4.000000);
+    float specular_roughness_to_power_4_out = math::pow(specular_roughness, 4.000000);
+    float thin_film_thickness_nm_out = thin_film_thickness * 1000.000000;
+    float specular_to_coat_ior_ratio_out = specular_ior / coat_ior;
+    float coat_to_specular_ior_ratio_out = coat_ior / specular_ior;
+    color if_transmission_tint_out = materialx::stdlib_1_10::mx_ifgreater_color3(transmission_depth, 0.000000, color(1.000000, 1.000000, 1.000000), transmission_color);
+    float3 transmission_color_vector_out = NG_convert_color3_vector3(transmission_color);
+    float3 transmission_depth_vector_out = NG_convert_float_vector3(transmission_depth);
+    float3 transmission_scatter_vector_out = NG_convert_color3_vector3(transmission_scatter);
+    color subsurface_color_nonnegative_out = math::max(subsurface_color, 0.000000);
+    float one_minus_subsurface_scatter_anisotropy_out = 1.000000 - subsurface_scatter_anisotropy;
+    float one_plus_subsurface_scatter_anisotropy_out = 1.000000 + subsurface_scatter_anisotropy;
+    color subsurface_radius_scaled_out = subsurface_radius_scale * subsurface_radius;
+    float subsurface_selector_out = float(geometry_thin_walled);
+    color base_color_nonnegative_out = math::max(base_color, 0.000000);
+    float coat_ior_minus_one_out = coat_ior - 1.000000;
+    float coat_ior_plus_one_out = 1.000000 + coat_ior;
+    float coat_ior_sqr_out = coat_ior * coat_ior;
+    color Emetal_out = base_color * specular_weight;
+    color Edielectric_out = math::lerp(base_color, subsurface_color, subsurface_weight);
+    float coat_weight_times_coat_darkening_out = coat_weight * coat_darkening;
+    color coat_attenuation_out = math::lerp(color(1.000000, 1.000000, 1.000000), coat_color, coat_weight);
+    color emission_weight_out = emission_color * emission_luminance;
+    float two_times_coat_roughness_to_power_4_out = coat_roughness_to_power_4_out * 2.000000;
+    float specular_to_coat_ior_ratio_tir_fix_out = materialx::stdlib_1_10::mx_ifgreater_float(specular_to_coat_ior_ratio_out, 1.000000, specular_to_coat_ior_ratio_out, coat_to_specular_ior_ratio_out);
+    float3 transmission_color_ln_out = math::log(transmission_color_vector_out);
+    float3 scattering_coeff_out = transmission_scatter_vector_out / transmission_depth_vector_out;
+    color subsurface_thin_walled_brdf_factor_out = subsurface_color * one_minus_subsurface_scatter_anisotropy_out;
+    color subsurface_thin_walled_btdf_factor_out = subsurface_color * one_plus_subsurface_scatter_anisotropy_out;
+    float coat_ior_to_F0_sqrt_out = coat_ior_minus_one_out / coat_ior_plus_one_out;
+    color Ebase_out = math::lerp(Edielectric_out, Emetal_out, base_metalness);
+    float add_coat_and_spec_roughnesses_to_power_4_out = two_times_coat_roughness_to_power_4_out + specular_roughness_to_power_4_out;
+    float eta_s_out = math::lerp(specular_ior, specular_to_coat_ior_ratio_tir_fix_out, coat_weight);
+    float3 extinction_coeff_denom_out = transmission_color_ln_out * -1.000000;
+    float3 if_volume_scattering_out = materialx::stdlib_1_10::mx_ifgreater_vector3(transmission_depth, 0.000000, scattering_coeff_out, float3(0.000000, 0.000000, 0.000000));
+    float coat_ior_to_F0_out = coat_ior_to_F0_sqrt_out * coat_ior_to_F0_sqrt_out;
+    float min_1_add_coat_and_spec_roughnesses_to_power_4_out = math::min(1.000000, add_coat_and_spec_roughnesses_to_power_4_out);
+    float eta_s_minus_one_out = eta_s_out - 1.000000;
+    float eta_s_plus_one_out = eta_s_out + 1.000000;
+    float3 extinction_coeff_out = extinction_coeff_denom_out / transmission_depth_vector_out;
+    float one_minus_coat_F0_out = 1.000000 - coat_ior_to_F0_out;
+    float coat_affected_specular_roughness_out = math::pow(min_1_add_coat_and_spec_roughnesses_to_power_4_out, 0.250000);
+    float sign_eta_s_minus_one_out = math::sign(eta_s_minus_one_out);
+    float specular_F0_sqrt_out = eta_s_minus_one_out / eta_s_plus_one_out;
+    float3 absorption_coeff_out = extinction_coeff_out - scattering_coeff_out;
+    float one_minus_coat_F0_over_eta2_out = one_minus_coat_F0_out / coat_ior_sqr_out;
+    color one_minus_coat_F0_color_out = NG_convert_float_color3(one_minus_coat_F0_out);
+    float effective_specular_roughness_out = math::lerp(specular_roughness, coat_affected_specular_roughness_out, coat_weight);
+    float specular_F0_out = specular_F0_sqrt_out * specular_F0_sqrt_out;
+    float absorption_coeff_x_out = materialx::stdlib_1_10::mx_extract_vector3(absorption_coeff_out, 0);
+    float absorption_coeff_y_out = materialx::stdlib_1_10::mx_extract_vector3(absorption_coeff_out, 1);
+    float absorption_coeff_z_out = materialx::stdlib_1_10::mx_extract_vector3(absorption_coeff_out, 2);
+    float Kcoat_out = 1.000000 - one_minus_coat_F0_over_eta2_out;
+    float2 main_roughness_out = NG_open_pbr_anisotropy(effective_specular_roughness_out, specular_roughness_anisotropy);
+    float scaled_specular_F0_out = specular_weight * specular_F0_out;
+    float absorption_coeff_min_x_y_out = math::min(absorption_coeff_x_out, absorption_coeff_y_out);
+    float one_minus_Kcoat_out = 1.000000 - Kcoat_out;
+    color Ebase_Kcoat_out = Ebase_out * Kcoat_out;
+    float scaled_specular_F0_clamped_out = math::clamp(scaled_specular_F0_out, 0.000000, 0.999990);
+    float absorption_coeff_min_out = math::min(absorption_coeff_min_x_y_out, absorption_coeff_z_out);
+    color one_minus_Kcoat_color_out = NG_convert_float_color3(one_minus_Kcoat_out);
+    color one_minus_Ebase_Kcoat_out = color(1.000000, 1.000000, 1.000000) - Ebase_Kcoat_out;
+    float sqrt_scaled_specular_F0_out = math::sqrt(scaled_specular_F0_clamped_out);
+    float3 absorption_coeff_min_vector_out = NG_convert_float_vector3(absorption_coeff_min_out);
+    color base_darkening_out = one_minus_Kcoat_color_out / one_minus_Ebase_Kcoat_out;
+    float modulated_eta_s_epsilon_out = sign_eta_s_minus_one_out * sqrt_scaled_specular_F0_out;
+    float3 absorption_coeff_shifted_out = absorption_coeff_out - absorption_coeff_min_vector_out;
+    color modulated_base_darkening_out = math::lerp(color(1.000000, 1.000000, 1.000000), base_darkening_out, coat_weight_times_coat_darkening_out);
+    float one_plus_modulated_eta_s_epsilon_out = 1.000000 + modulated_eta_s_epsilon_out;
+    float one_minus_modulated_eta_s_epsilon_out = 1.000000 - modulated_eta_s_epsilon_out;
+    float3 if_absorption_coeff_shifted_out = materialx::stdlib_1_10::mx_ifgreater_vector3(0.000000, absorption_coeff_min_out, absorption_coeff_shifted_out, absorption_coeff_out);
+    float modulated_eta_s_out = one_plus_modulated_eta_s_epsilon_out / one_minus_modulated_eta_s_epsilon_out;
+    float3 if_volume_absorption_out = materialx::stdlib_1_10::mx_ifgreater_vector3(transmission_depth, 0.000000, if_absorption_coeff_shifted_out, float3(0.000000, 0.000000, 0.000000));
+    material metal_bsdf_tf_out = materialx::pbrlib_1_10::mx_generalized_schlick_bsdf(mxp_weight:specular_weight, mxp_color0:metal_reflectivity_out, mxp_color82:metal_edgecolor_out, mxp_color90:color(1.000000, 1.000000, 1.000000), mxp_exponent:5.000000,mxp_roughness:main_roughness_out, mxp_thinfilm_thickness:thin_film_thickness_nm_out, mxp_thinfilm_ior:thin_film_ior, mxp_normal:geometry_normal, mxp_tangent:geometry_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_R, mxp_base:material(), mxp_top_weight:1.000000);
+    material metal_bsdf_out = materialx::pbrlib_1_10::mx_generalized_schlick_bsdf(mxp_weight:specular_weight, mxp_color0:metal_reflectivity_out, mxp_color82:metal_edgecolor_out, mxp_color90:color(1.000000, 1.000000, 1.000000), mxp_exponent:5.000000,mxp_roughness:main_roughness_out, mxp_thinfilm_thickness:0.000000, mxp_thinfilm_ior:1.500000, mxp_normal:geometry_normal, mxp_tangent:geometry_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_R, mxp_base:material(), mxp_top_weight:1.000000);
+    material metal_bsdf_tf_mix_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:metal_bsdf_tf_out, mxp_bg:metal_bsdf_out, mxp_mix:thin_film_weight);
+    material dielectric_transmission_out = materialx::pbrlib_1_10::mx_dielectric_bsdf(mxp_weight:1.000000, mxp_tint:if_transmission_tint_out, mxp_ior:modulated_eta_s_out, mxp_roughness:main_roughness_out, mxp_thinfilm_thickness:0.000000, mxp_thinfilm_ior:1.500000, mxp_normal:geometry_normal, mxp_tangent:geometry_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_T, mxp_base:material(), mxp_top_weight:1.000000);
+    material dielectric_volume_out = materialx::pbrlib_1_10::mx_anisotropic_vdf(mxp_absorption:if_volume_absorption_out, mxp_scattering:if_volume_scattering_out, mxp_anisotropy:transmission_scatter_anisotropy);
+    material dielectric_volume_transmission_out = material(surface: dielectric_transmission_out.surface, backface: dielectric_transmission_out.backface, ior: dielectric_transmission_out.ior, volume: dielectric_volume_out.volume);
+    material subsurface_thin_walled_reflection_bsdf_out = materialx::pbrlib_1_10::mx_oren_nayar_diffuse_bsdf(mxp_weight:1.000000, mxp_color:subsurface_color_nonnegative_out, mxp_roughness:base_diffuse_roughness, mxp_normal:geometry_normal, mxp_energy_compensation:false);
+    material subsurface_thin_walled_reflection_out = materialx::pbrlib_1_10::mx_multiply_bsdf_color3(mxp_in1:subsurface_thin_walled_reflection_bsdf_out, mxp_in2:subsurface_thin_walled_brdf_factor_out);
+    material subsurface_thin_walled_transmission_bsdf_out = materialx::pbrlib_1_10::mx_translucent_bsdf(mxp_weight:1.000000, mxp_color:subsurface_color_nonnegative_out, mxp_normal:geometry_normal);
+    material subsurface_thin_walled_transmission_out = materialx::pbrlib_1_10::mx_multiply_bsdf_color3(mxp_in1:subsurface_thin_walled_transmission_bsdf_out, mxp_in2:subsurface_thin_walled_btdf_factor_out);
+    material subsurface_thin_walled_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:subsurface_thin_walled_reflection_out, mxp_bg:subsurface_thin_walled_transmission_out, mxp_mix:0.500000);
+    material subsurface_bsdf_out = materialx::pbrlib_1_10::mx_subsurface_bsdf(mxp_weight:1.000000, mxp_color:subsurface_color_nonnegative_out, mxp_radius:subsurface_radius_scaled_out, mxp_anisotropy:subsurface_scatter_anisotropy, mxp_normal:geometry_normal);
+    material selected_subsurface_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:subsurface_thin_walled_out, mxp_bg:subsurface_bsdf_out, mxp_mix:subsurface_selector_out);
+    material diffuse_bsdf_out = materialx::pbrlib_1_10::mx_oren_nayar_diffuse_bsdf(mxp_weight:base_weight, mxp_color:base_color_nonnegative_out, mxp_roughness:base_diffuse_roughness, mxp_normal:geometry_normal, mxp_energy_compensation:true);
+    material opaque_base_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:selected_subsurface_out, mxp_bg:diffuse_bsdf_out, mxp_mix:subsurface_weight);
+    material dielectric_substrate_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:dielectric_volume_transmission_out, mxp_bg:opaque_base_out, mxp_mix:transmission_weight);
+    material dielectric_base_tf_out = materialx::pbrlib_1_10::mx_dielectric_bsdf(mxp_weight:1.000000, mxp_tint:specular_color, mxp_ior:modulated_eta_s_out, mxp_roughness:main_roughness_out, mxp_thinfilm_thickness:thin_film_thickness_nm_out, mxp_thinfilm_ior:thin_film_ior, mxp_normal:geometry_normal, mxp_tangent:geometry_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_R, mxp_base:dielectric_substrate_out, mxp_top_weight:1.000000);
+    material dielectric_base_notf_out = materialx::pbrlib_1_10::mx_dielectric_bsdf(mxp_weight:1.000000, mxp_tint:specular_color, mxp_ior:modulated_eta_s_out, mxp_roughness:main_roughness_out, mxp_thinfilm_thickness:0.000000, mxp_thinfilm_ior:1.500000, mxp_normal:geometry_normal, mxp_tangent:geometry_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_R, mxp_base:dielectric_substrate_out, mxp_top_weight:1.000000);
+    material dielectric_base_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:dielectric_base_tf_out, mxp_bg:dielectric_base_notf_out, mxp_mix:thin_film_weight);
+    material base_substrate_out = materialx::pbrlib_1_10::mx_mix_bsdf(mxp_fg:metal_bsdf_tf_mix_out, mxp_bg:dielectric_base_out, mxp_mix:base_metalness);
+    material darkened_base_substrate_out = materialx::pbrlib_1_10::mx_multiply_bsdf_color3(mxp_in1:base_substrate_out, mxp_in2:modulated_base_darkening_out);
+    material coat_substrate_attenuated_out = materialx::pbrlib_1_10::mx_multiply_bsdf_color3(mxp_in1:darkened_base_substrate_out, mxp_in2:coat_attenuation_out);
+    material coat_layer_out = materialx::pbrlib_1_10::mx_dielectric_bsdf(mxp_weight:coat_weight, mxp_tint:color(1.000000, 1.000000, 1.000000), mxp_ior:coat_ior, mxp_roughness:coat_roughness_vector_out, mxp_thinfilm_thickness:0.000000, mxp_thinfilm_ior:1.500000, mxp_normal:geometry_coat_normal, mxp_tangent:geometry_coat_tangent, mxp_distribution:mx_distribution_type_ggx, mxp_scatter_mode:mx_scatter_mode_R, mxp_base:coat_substrate_attenuated_out, mxp_top_weight:1.000000);
+    material fuzz_layer_out = materialx::pbrlib_1_10::mx_sheen_bsdf(mxp_weight:fuzz_weight, mxp_color:fuzz_color, mxp_roughness:fuzz_roughness, mxp_normal:geometry_normal, mxp_mode:mx_sheen_mode_zeltner, mxp_base:coat_layer_out);
+    material uncoated_emission_edf_out = materialx::pbrlib_1_10::mx_uniform_edf(mxp_color:emission_weight_out);
+    material coat_tinted_emission_edf_out = materialx::pbrlib_1_10::mx_multiply_edf_color3(mxp_in1:uncoated_emission_edf_out, mxp_in2:coat_color);
+    material coated_emission_edf_out = materialx::pbrlib_1_10::mx_generalized_schlick_edf(mxp_color0:one_minus_coat_F0_color_out, mxp_color90:color(0.000000, 0.000000, 0.000000), mxp_exponent:5.000000, mxp_base:coat_tinted_emission_edf_out);
+    material emission_edf_out = materialx::pbrlib_1_10::mx_mix_edf(mxp_fg:coated_emission_edf_out, mxp_bg:uncoated_emission_edf_out, mxp_mix:coat_weight);
+    material shader_constructor_out = materialx::pbrlib_1_10::mx_surface(mxp_bsdf: fuzz_layer_out, mxp_edf: emission_edf_out, mxp_opacity: geometry_opacity, mxp_thin_walled: false);
+}
+in material(shader_constructor_out);
+
+export material materialx_preview
+(
+    uniform int graph_mmuv_texcoord_index = 0
+    [[
+    	materialx::core::origin("graph_mmuv_texcoord/index")
+    ]],
+    uniform mx_coordinatespace_type geomprop_Nworld_space = mx_coordinatespace_type_world
+    [[
+    	materialx::core::origin("Nworld")
+    ]],
+    uniform mx_coordinatespace_type geomprop_Tworld_space = mx_coordinatespace_type_world
+    [[
+    	materialx::core::origin("Tworld")
+    ]],
+    uniform int geomprop_Tworld_index = 0
+    [[
+    	materialx::core::origin("Tworld")
+    ]],
+    uniform mx_coordinatespace_type geomprop_Bworld_space = mx_coordinatespace_type_world
+    [[
+    	materialx::core::origin("Bworld")
+    ]],
+    uniform int geomprop_Bworld_index = 0
+    [[
+    	materialx::core::origin("Bworld")
+    ]],
+    float2 graph_mmuv_texcoord_scaled_in2 = float2(0.012500, 0.012500)
+    [[
+    	materialx::core::origin("graph_mmuv_texcoord_scale_constant/value")
+    ]],
+    uniform texture_2d basecolor_img_file = texture_2d("/textures/basecolor.png", tex::gamma_linear)
+    [[
+    	materialx::core::origin("basecolor_img/file")
+    ]],
+    uniform string basecolor_img_layer = ""
+    [[
+    	materialx::core::origin("basecolor_img/layer")
+    ]],
+    color basecolor_img_default = color(0.000000, 0.000000, 0.000000)
+    [[
+    	materialx::core::origin("basecolor_img/default")
+    ]],
+    uniform mx_addressmode_type basecolor_img_uaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("basecolor_img/uaddressmode")
+    ]],
+    uniform mx_addressmode_type basecolor_img_vaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("basecolor_img/vaddressmode")
+    ]],
+    uniform mx_filterlookup_type basecolor_img_filtertype = mx_filterlookup_type_linear
+    [[
+    	materialx::core::origin("basecolor_img/filtertype")
+    ]],
+    uniform string basecolor_img_framerange = ""
+    [[
+    	materialx::core::origin("basecolor_img/framerange")
+    ]],
+    uniform int basecolor_img_frameoffset = 0
+    [[
+    	materialx::core::origin("basecolor_img/frameoffset")
+    ]],
+    uniform mx_addressmode_type basecolor_img_frameendaction = mx_addressmode_type_constant
+    [[
+    	materialx::core::origin("basecolor_img/frameendaction")
+    ]],
+    uniform texture_2d roughness_img_file = texture_2d("/textures/roughness.png", tex::gamma_linear)
+    [[
+    	materialx::core::origin("roughness_img/file")
+    ]],
+    uniform string roughness_img_layer = ""
+    [[
+    	materialx::core::origin("roughness_img/layer")
+    ]],
+    float roughness_img_default = 0.000000
+    [[
+    	materialx::core::origin("roughness_img/default")
+    ]],
+    uniform mx_addressmode_type roughness_img_uaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("roughness_img/uaddressmode")
+    ]],
+    uniform mx_addressmode_type roughness_img_vaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("roughness_img/vaddressmode")
+    ]],
+    uniform mx_filterlookup_type roughness_img_filtertype = mx_filterlookup_type_linear
+    [[
+    	materialx::core::origin("roughness_img/filtertype")
+    ]],
+    uniform string roughness_img_framerange = ""
+    [[
+    	materialx::core::origin("roughness_img/framerange")
+    ]],
+    uniform int roughness_img_frameoffset = 0
+    [[
+    	materialx::core::origin("roughness_img/frameoffset")
+    ]],
+    uniform mx_addressmode_type roughness_img_frameendaction = mx_addressmode_type_constant
+    [[
+    	materialx::core::origin("roughness_img/frameendaction")
+    ]],
+    uniform texture_2d normal_img_file = texture_2d("/textures/normal.png", tex::gamma_linear)
+    [[
+    	materialx::core::origin("normal_img/file")
+    ]],
+    uniform string normal_img_layer = ""
+    [[
+    	materialx::core::origin("normal_img/layer")
+    ]],
+    float3 normal_img_default = float3(0.000000, 0.000000, 0.000000)
+    [[
+    	materialx::core::origin("normal_img/default")
+    ]],
+    uniform mx_addressmode_type normal_img_uaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("normal_img/uaddressmode")
+    ]],
+    uniform mx_addressmode_type normal_img_vaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("normal_img/vaddressmode")
+    ]],
+    uniform mx_filterlookup_type normal_img_filtertype = mx_filterlookup_type_linear
+    [[
+    	materialx::core::origin("normal_img/filtertype")
+    ]],
+    uniform string normal_img_framerange = ""
+    [[
+    	materialx::core::origin("normal_img/framerange")
+    ]],
+    uniform int normal_img_frameoffset = 0
+    [[
+    	materialx::core::origin("normal_img/frameoffset")
+    ]],
+    uniform mx_addressmode_type normal_img_frameendaction = mx_addressmode_type_constant
+    [[
+    	materialx::core::origin("normal_img/frameendaction")
+    ]],
+    uniform texture_2d coatnormal_img_file = texture_2d("/textures/coatnormal.png", tex::gamma_linear)
+    [[
+    	materialx::core::origin("coatnormal_img/file")
+    ]],
+    uniform string coatnormal_img_layer = ""
+    [[
+    	materialx::core::origin("coatnormal_img/layer")
+    ]],
+    float3 coatnormal_img_default = float3(0.000000, 0.000000, 0.000000)
+    [[
+    	materialx::core::origin("coatnormal_img/default")
+    ]],
+    uniform mx_addressmode_type coatnormal_img_uaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("coatnormal_img/uaddressmode")
+    ]],
+    uniform mx_addressmode_type coatnormal_img_vaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("coatnormal_img/vaddressmode")
+    ]],
+    uniform mx_filterlookup_type coatnormal_img_filtertype = mx_filterlookup_type_linear
+    [[
+    	materialx::core::origin("coatnormal_img/filtertype")
+    ]],
+    uniform string coatnormal_img_framerange = ""
+    [[
+    	materialx::core::origin("coatnormal_img/framerange")
+    ]],
+    uniform int coatnormal_img_frameoffset = 0
+    [[
+    	materialx::core::origin("coatnormal_img/frameoffset")
+    ]],
+    uniform mx_addressmode_type coatnormal_img_frameendaction = mx_addressmode_type_constant
+    [[
+    	materialx::core::origin("coatnormal_img/frameendaction")
+    ]],
+    uniform texture_2d height_img_file = texture_2d("/textures/height.png", tex::gamma_linear)
+    [[
+    	materialx::core::origin("height_img/file")
+    ]],
+    uniform string height_img_layer = ""
+    [[
+    	materialx::core::origin("height_img/layer")
+    ]],
+    float height_img_default = 0.000000
+    [[
+    	materialx::core::origin("height_img/default")
+    ]],
+    uniform mx_addressmode_type height_img_uaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("height_img/uaddressmode")
+    ]],
+    uniform mx_addressmode_type height_img_vaddressmode = mx_addressmode_type_periodic
+    [[
+    	materialx::core::origin("height_img/vaddressmode")
+    ]],
+    uniform mx_filterlookup_type height_img_filtertype = mx_filterlookup_type_linear
+    [[
+    	materialx::core::origin("height_img/filtertype")
+    ]],
+    uniform string height_img_framerange = ""
+    [[
+    	materialx::core::origin("height_img/framerange")
+    ]],
+    uniform int height_img_frameoffset = 0
+    [[
+    	materialx::core::origin("height_img/frameoffset")
+    ]],
+    uniform mx_addressmode_type height_img_frameendaction = mx_addressmode_type_constant
+    [[
+    	materialx::core::origin("height_img/frameendaction")
+    ]],
+    float normal_nm_scale = 1.000000
+    [[
+    	materialx::core::origin("normal_nm/scale")
+    ]],
+    float coatnormal_nm_scale = 1.000000
+    [[
+    	materialx::core::origin("coatnormal_nm/scale")
+    ]],
+    float displacement_scale = 1.000000
+    [[
+    	materialx::core::origin("displacement/scale")
+    ]],
+    float shader_base_weight = 1.000000
+    [[
+    	materialx::core::origin("shader/base_weight")
+    ]],
+    float shader_base_diffuse_roughness = 0.000000
+    [[
+    	materialx::core::origin("shader/base_diffuse_roughness")
+    ]],
+    float shader_base_metalness = 0.000000
+    [[
+    	materialx::core::origin("shader/base_metalness")
+    ]],
+    float shader_specular_weight = 0.733719
+    [[
+    	materialx::core::origin("shader/specular_weight")
+    ]],
+    color shader_specular_color = color(1.000000, 1.000000, 1.000000)
+    [[
+    	materialx::core::origin("shader/specular_color")
+    ]],
+    float shader_specular_ior = 1.500000
+    [[
+    	materialx::core::origin("shader/specular_ior")
+    ]],
+    float shader_specular_roughness_anisotropy = 0.000000
+    [[
+    	materialx::core::origin("shader/specular_roughness_anisotropy")
+    ]],
+    float shader_transmission_weight = 0.000000
+    [[
+    	materialx::core::origin("shader/transmission_weight")
+    ]],
+    color shader_transmission_color = color(1.000000, 1.000000, 1.000000)
+    [[
+    	materialx::core::origin("shader/transmission_color")
+    ]],
+    float shader_transmission_depth = 0.000000
+    [[
+    	materialx::core::origin("shader/transmission_depth")
+    ]],
+    color shader_transmission_scatter = color(0.000000, 0.000000, 0.000000)
+    [[
+    	materialx::core::origin("shader/transmission_scatter")
+    ]],
+    float shader_transmission_scatter_anisotropy = 0.000000
+    [[
+    	materialx::core::origin("shader/transmission_scatter_anisotropy")
+    ]],
+    float shader_transmission_dispersion_scale = 0.000000
+    [[
+    	materialx::core::origin("shader/transmission_dispersion_scale")
+    ]],
+    float shader_transmission_dispersion_abbe_number = 20.000000
+    [[
+    	materialx::core::origin("shader/transmission_dispersion_abbe_number")
+    ]],
+    float shader_subsurface_weight = 0.000000
+    [[
+    	materialx::core::origin("shader/subsurface_weight")
+    ]],
+    color shader_subsurface_color = color(0.800000, 0.800000, 0.800000)
+    [[
+    	materialx::core::origin("shader/subsurface_color")
+    ]],
+    float shader_subsurface_radius = 1.000000
+    [[
+    	materialx::core::origin("shader/subsurface_radius")
+    ]],
+    color shader_subsurface_radius_scale = color(1.000000, 0.500000, 0.250000)
+    [[
+    	materialx::core::origin("shader/subsurface_radius_scale")
+    ]],
+    float shader_subsurface_scatter_anisotropy = 0.000000
+    [[
+    	materialx::core::origin("shader/subsurface_scatter_anisotropy")
+    ]],
+    float shader_fuzz_weight = 0.000000
+    [[
+    	materialx::core::origin("shader/fuzz_weight")
+    ]],
+    color shader_fuzz_color = color(1.000000, 1.000000, 1.000000)
+    [[
+    	materialx::core::origin("shader/fuzz_color")
+    ]],
+    float shader_fuzz_roughness = 0.500000
+    [[
+    	materialx::core::origin("shader/fuzz_roughness")
+    ]],
+    float shader_coat_weight = 0.000000
+    [[
+    	materialx::core::origin("shader/coat_weight")
+    ]],
+    color shader_coat_color = color(1.000000, 1.000000, 1.000000)
+    [[
+    	materialx::core::origin("shader/coat_color")
+    ]],
+    float shader_coat_roughness = 0.000000
+    [[
+    	materialx::core::origin("shader/coat_roughness")
+    ]],
+    float shader_coat_roughness_anisotropy = 0.000000
+    [[
+    	materialx::core::origin("shader/coat_roughness_anisotropy")
+    ]],
+    float shader_coat_ior = 1.600000
+    [[
+    	materialx::core::origin("shader/coat_ior")
+    ]],
+    float shader_coat_darkening = 1.000000
+    [[
+    	materialx::core::origin("shader/coat_darkening")
+    ]],
+    float shader_thin_film_weight = 0.000000
+    [[
+    	materialx::core::origin("shader/thin_film_weight")
+    ]],
+    float shader_thin_film_thickness = 0.500000
+    [[
+    	materialx::core::origin("shader/thin_film_thickness")
+    ]],
+    float shader_thin_film_ior = 1.400000
+    [[
+    	materialx::core::origin("shader/thin_film_ior")
+    ]],
+    float shader_emission_luminance = 0.000000
+    [[
+    	materialx::core::origin("shader/emission_luminance")
+    ]],
+    color shader_emission_color = color(1.000000, 1.000000, 1.000000)
+    [[
+    	materialx::core::origin("shader/emission_color")
+    ]],
+    float shader_geometry_opacity = 1.000000
+    [[
+    	materialx::core::origin("shader/geometry_opacity")
+    ]],
+    bool shader_geometry_thin_walled = false
+    [[
+    	materialx::core::origin("shader/geometry_thin_walled")
+    ]]
+)
+= let
+{
+    material backsurfaceshader = material();
+    float2 graph_mmuv_texcoord_out = materialx::stdlib_1_10::mx_texcoord_vector2(mxp_index:graph_mmuv_texcoord_index);
+    float3 geomprop_Nworld_out1 = materialx::stdlib_1_10::mx_normal_vector3(mxp_space:geomprop_Nworld_space);
+    float3 geomprop_Tworld_out1 = materialx::stdlib_1_10::mx_tangent_vector3(mxp_space:geomprop_Tworld_space, mxp_index:geomprop_Tworld_index);
+    float3 geomprop_Bworld_out1 = materialx::stdlib_1_10::mx_bitangent_vector3(mxp_space:geomprop_Bworld_space, mxp_index:geomprop_Bworld_index);
+    float2 graph_mmuv_texcoord_scaled_out = graph_mmuv_texcoord_out * graph_mmuv_texcoord_scaled_in2;
+    color basecolor_img_out = materialx::stdlib_1_10::mx_image_color3(basecolor_img_file, basecolor_img_layer, basecolor_img_default, graph_mmuv_texcoord_scaled_out, basecolor_img_uaddressmode, basecolor_img_vaddressmode, basecolor_img_filtertype, basecolor_img_framerange, basecolor_img_frameoffset, basecolor_img_frameendaction, mxp_flip_v:false);
+    float roughness_img_out = materialx::stdlib_1_10::mx_image_float(roughness_img_file, roughness_img_layer, roughness_img_default, graph_mmuv_texcoord_scaled_out, roughness_img_uaddressmode, roughness_img_vaddressmode, roughness_img_filtertype, roughness_img_framerange, roughness_img_frameoffset, roughness_img_frameendaction, mxp_flip_v:false);
+    float3 normal_img_out = materialx::stdlib_1_10::mx_image_vector3(normal_img_file, normal_img_layer, normal_img_default, graph_mmuv_texcoord_scaled_out, normal_img_uaddressmode, normal_img_vaddressmode, normal_img_filtertype, normal_img_framerange, normal_img_frameoffset, normal_img_frameendaction, mxp_flip_v:false);
+    float3 coatnormal_img_out = materialx::stdlib_1_10::mx_image_vector3(coatnormal_img_file, coatnormal_img_layer, coatnormal_img_default, graph_mmuv_texcoord_scaled_out, coatnormal_img_uaddressmode, coatnormal_img_vaddressmode, coatnormal_img_filtertype, coatnormal_img_framerange, coatnormal_img_frameoffset, coatnormal_img_frameendaction, mxp_flip_v:false);
+    float height_img_out = materialx::stdlib_1_10::mx_image_float(height_img_file, height_img_layer, height_img_default, graph_mmuv_texcoord_scaled_out, height_img_uaddressmode, height_img_vaddressmode, height_img_filtertype, height_img_framerange, height_img_frameoffset, height_img_frameendaction, mxp_flip_v:false);
+    color basecolor_img_out_cm_out = NG_srgb_texture_to_lin_rec709_color3(basecolor_img_out);
+    float3 normal_nm_out = materialx::stdlib_1_10::mx_normalmap_float(mxp_in:normal_img_out, mxp_scale:normal_nm_scale, mxp_normal:geomprop_Nworld_out1, mxp_tangent:geomprop_Tworld_out1, mxp_bitangent:geomprop_Bworld_out1);
+    float3 coatnormal_nm_out = materialx::stdlib_1_10::mx_normalmap_float(mxp_in:coatnormal_img_out, mxp_scale:coatnormal_nm_scale, mxp_normal:geomprop_Nworld_out1, mxp_tangent:geomprop_Tworld_out1, mxp_bitangent:geomprop_Bworld_out1);
+    material displacement_out = materialx::pbrlib_1_10::mx_displacement_float(mxp_displacement:height_img_out, mxp_scale:displacement_scale);
+    material shader_out = NG_open_pbr_surface_surfaceshader_limited_layers(shader_base_weight, basecolor_img_out_cm_out, shader_base_diffuse_roughness, shader_base_metalness, shader_specular_weight, shader_specular_color, roughness_img_out, shader_specular_ior, shader_specular_roughness_anisotropy, shader_transmission_weight, shader_transmission_color, shader_transmission_depth, shader_transmission_scatter, shader_transmission_scatter_anisotropy, shader_transmission_dispersion_scale, shader_transmission_dispersion_abbe_number, shader_subsurface_weight, shader_subsurface_color, shader_subsurface_radius, shader_subsurface_radius_scale, shader_subsurface_scatter_anisotropy, shader_fuzz_weight, shader_fuzz_color, shader_fuzz_roughness, shader_coat_weight, shader_coat_color, shader_coat_roughness, shader_coat_roughness_anisotropy, shader_coat_ior, shader_coat_darkening, shader_thin_film_weight, shader_thin_film_thickness, shader_thin_film_ior, shader_emission_luminance, shader_emission_color, shader_geometry_opacity, shader_geometry_thin_walled, normal_nm_out, coatnormal_nm_out, geomprop_Tworld_out1, geomprop_Tworld_out1);
+    material surface_out = materialx::stdlib_1_10::mx_surfacematerial(mxp_surfaceshader: shader_out, mxp_backsurfaceshader: backsurfaceshader, mxp_displacementshader: displacement_out);
+    material finalOutput__ = surface_out;
+}
+in material(finalOutput__);
