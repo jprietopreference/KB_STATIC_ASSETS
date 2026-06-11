@@ -1,0 +1,58 @@
+#usda 1.0
+(
+    defaultPrim = "Looks"
+)
+
+def Scope "Looks"
+{
+    def Material "AnchorDefaults"
+    {
+        def Shader "Shader"
+        {
+            float inputs:albedo_add = 0
+            float inputs:albedo_brightness = 1
+            float inputs:albedo_desaturation = 0
+            asset inputs:ao_texture = @@
+            float inputs:ao_to_diffuse = 0
+            float inputs:bump_factor = 1
+            float inputs:detail_bump_factor = 0.3
+            asset inputs:detail_normalmap_texture = @@
+            float inputs:detail_texture_rotate = 0
+            float2 inputs:detail_texture_scale = (1, 1)
+            float2 inputs:detail_texture_translate = (0, 0)
+            color3f inputs:diffuse_color_constant = (0.5, 0.5, 0.5)
+            asset inputs:diffuse_texture = @@
+            color3f inputs:diffuse_tint = (1, 1, 1)
+            color3f inputs:emissive_color = (0, 0, 0)
+            asset inputs:emissive_color_texture = @@
+            float inputs:emissive_intensity = 0
+            asset inputs:emissive_mask_texture = @@
+            bool inputs:enable_emission = 0
+            bool inputs:enable_opacity = 0
+            bool inputs:enable_opacity_texture = 0
+            bool inputs:enable_ORM_texture = 0
+            bool inputs:flip_tangent_u = 0
+            bool inputs:flip_tangent_v = 1
+            float inputs:geometry_normal_roughness_strength = 0
+            float inputs:metallic_constant = 0
+            asset inputs:metallic_texture = @@
+            float inputs:metallic_texture_influence = 0
+            asset inputs:normalmap_texture = @@
+            float inputs:opacity_constant = 1
+            int inputs:opacity_mode = 0
+            asset inputs:opacity_texture = @@
+            float inputs:opacity_threshold = 0
+            asset inputs:ORM_texture = @@
+            bool inputs:project_uvw = 0
+            float inputs:reflection_roughness_constant = 0.5
+            float inputs:reflection_roughness_texture_influence = 0
+            asset inputs:reflectionroughness_texture = @@
+            float inputs:specular_level = 0.5
+            float inputs:texture_rotate = 0
+            float2 inputs:texture_scale = (1, 1)
+            float2 inputs:texture_translate = (0, 0)
+            int inputs:uv_space_index = 0
+            bool inputs:world_or_object = 0
+        }
+    }
+}

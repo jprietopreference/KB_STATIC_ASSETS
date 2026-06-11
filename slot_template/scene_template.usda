@@ -286,7 +286,9 @@ def Xform "World" (
             }
         }
 
-        def Material "ActiveMaterial"
+        def Material "ActiveMaterial" (
+            append references = @./anchor_defaults.usda@</Looks/AnchorDefaults>
+        )
         {
             token outputs:displacement.connect = </World/Looks/ActiveMaterial/Shader.outputs:out>
             token outputs:mdl:displacement.connect = </World/Looks/ActiveMaterial/Shader.outputs:out>
